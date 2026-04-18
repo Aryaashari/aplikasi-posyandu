@@ -1,5 +1,11 @@
 <script>
+    import { router } from '@inertiajs/svelte';
+    
     let { onToggleSidebar, sidebarOpen } = $props();
+
+    function logout() {
+        router.post('/logout');
+    }
 </script>
 
 <header class="fixed top-0 right-0 z-40 flex items-center h-20 transition-all duration-300 bg-white border-b border-gray-200 {sidebarOpen ? 'left-72' : 'left-0 lg:left-20'}">
@@ -47,7 +53,11 @@
             </button>
 
             <!-- Quick Settings -->
-            <button class="flex items-center gap-2 p-2 text-gray-500 transition-all rounded-xl hover:bg-gray-100">
+            <button 
+                onclick={logout}
+                class="flex items-center gap-2 p-2 text-gray-500 transition-all rounded-xl hover:bg-gray-100"
+                aria-label="Keluar"
+            >
                 <div class="p-1 px-3 text-sm font-bold text-white rounded-lg bg-posyandu-secondary">
                     Keluar
                 </div>

@@ -8,7 +8,7 @@ class TrxKehadiran extends Model
 {
     protected $table = 'trx_kehadiran';
     protected $guarded = ['id'];
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function anak()
     {

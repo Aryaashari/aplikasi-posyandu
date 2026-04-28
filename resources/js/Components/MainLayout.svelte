@@ -1,9 +1,17 @@
 <script>
+    import { onMount } from 'svelte';
     import Sidebar from './Sidebar.svelte';
     import Header from './Header.svelte';
 
     let { children } = $props();
-    let sidebarOpen = $state(true);
+    let sidebarOpen = $state(false);
+
+    onMount(() => {
+        // Otomatis buka sidebar hanya jika di layar besar (Desktop)
+        if (window.innerWidth >= 1024) {
+            sidebarOpen = true;
+        }
+    });
 
     function toggleSidebar() {
         sidebarOpen = !sidebarOpen;

@@ -13,7 +13,7 @@ export default defineConfig({
         tailwindcss(),
     ],
     optimizeDeps: {
-        exclude: ['@inertiajs/svelte'],
+        exclude: ['@inertiajs/svelte', 'svelte-chartjs'],
     },
     server: {
         watch: {

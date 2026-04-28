@@ -4,14 +4,17 @@
         disabled = false, 
         processing = false, 
         class: className = '',
-        children 
+        children,
+        ...rest 
     } = $props();
 </script>
 
 <button
     {type}
     {disabled}
-    class="w-full flex items-center justify-center gap-3 px-6 py-4 text-xl font-black text-white bg-posyandu-primary rounded-2xl shadow-lg shadow-green-200 hover:bg-green-600 hover:scale-[1.02] active:scale-[0.98] focus:ring-4 focus:ring-posyandu-primary/20 transition-all disabled:opacity-70 disabled:pointer-events-none {className}"
+    {...rest}
+    {...rest}
+    class="w-full flex items-center justify-center gap-2 px-4 py-3 sm:px-6 sm:py-4 text-lg sm:text-xl font-black text-white bg-posyandu-primary rounded-2xl shadow-lg shadow-green-200 hover:bg-green-600 hover:scale-[1.02] active:scale-[0.98] focus:ring-4 focus:ring-posyandu-primary/20 transition-all disabled:opacity-70 disabled:pointer-events-none {className}"
 >
     {#if processing}
         <svg class="animate-spin h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

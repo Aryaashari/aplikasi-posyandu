@@ -67,7 +67,7 @@
                                 </span>
                             </td>
                             <td class="px-6 py-5">
-                                <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center gap-2 transition-opacity">
                                     <Link 
                                         href="/pengukuran/{item.id}/edit"
                                         class="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-all"

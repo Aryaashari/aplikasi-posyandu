@@ -120,7 +120,7 @@
                                     <p class="text-sm text-gray-400 font-bold">Ayah: {item.nama_ayah}</p>
                                 </td>
                                 <td class="px-5 sm:px-8 py-4 sm:py-6">
-                                    <div class="flex items-center justify-end gap-1 sm:gap-3 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                    <div class="flex items-center justify-end gap-1 sm:gap-3 transition-opacity">
                                     <a href="/anak/{item.id}" aria-label="Lihat KMS {item.nama}">
                                         <button class="p-2 sm:p-3 text-posyandu-secondary hover:bg-posyandu-secondary/10 rounded-lg sm:rounded-xl transition-all" aria-label="Lihat KMS">
                                             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

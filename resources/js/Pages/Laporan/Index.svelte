@@ -16,6 +16,7 @@
 
     let month = $state(filters.month);
     let year = $state(filters.year);
+    let weightTrendFilter = $state('all');
 
     const months = [
         { value: 1, label: 'Januari' }, { value: 2, label: 'Februari' },
@@ -140,6 +141,68 @@
             </div>
         </Card>
     </div>
+
+    <!-- Weight Trends -->
+    <Card class="!p-8">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h3 class="text-xl font-black text-posyandu-dark">Tren Berat Badan</h3>
+                <p class="text-sm font-bold text-gray-400 mt-1">Dibandingkan dengan pengukuran bulan sebelumnya</p>
+            </div>
+            <div class="flex bg-gray-100 rounded-xl p-1 gap-1 w-full md:w-auto">
+                <button 
+                    onclick={() => weightTrendFilter = 'all'} 
+                    class="flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold transition-all {weightTrendFilter === 'all' ? 'bg-white text-posyandu-dark shadow-sm' : 'text-gray-400 hover:text-gray-600'}"
+                >
+                    Semua
+                </button>
+                <button 
+                    onclick={() => weightTrendFilter = 'L'} 
+                    class="flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold transition-all {weightTrendFilter === 'L' ? 'bg-white text-posyandu-dark shadow-sm' : 'text-gray-400 hover:text-gray-600'}"
+                >
+                    Laki-laki
+                </button>
+                <button 
+                    onclick={() => weightTrendFilter = 'P'} 
+                    class="flex-1 md:flex-none px-4 py-2 rounded-lg text-sm font-bold transition-all {weightTrendFilter === 'P' ? 'bg-white text-posyandu-dark shadow-sm' : 'text-gray-400 hover:text-gray-600'}"
+                >
+                    Perempuan
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="flex items-center gap-4 bg-green-50 rounded-2xl p-5 border border-green-100 hover:shadow-md transition-all">
+                <div class="w-14 h-14 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                </div>
+                <div>
+                    <p class="text-green-600/80 font-black text-sm mb-0.5 uppercase tracking-wide">Naik</p>
+                    <p class="text-3xl font-black text-green-700">{stats.weight_trends[weightTrendFilter]?.naik || 0} <span class="text-sm font-bold text-green-600/60">Anak</span></p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 bg-red-50 rounded-2xl p-5 border border-red-100 hover:shadow-md transition-all">
+                <div class="w-14 h-14 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>
+                </div>
+                <div>
+                    <p class="text-red-600/80 font-black text-sm mb-0.5 uppercase tracking-wide">Turun</p>
+                    <p class="text-3xl font-black text-red-700">{stats.weight_trends[weightTrendFilter]?.turun || 0} <span class="text-sm font-bold text-red-600/60">Anak</span></p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 bg-blue-50 rounded-2xl p-5 border border-blue-100 hover:shadow-md transition-all">
+                <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 12h14" /></svg>
+                </div>
+                <div>
+                    <p class="text-blue-600/80 font-black text-sm mb-0.5 uppercase tracking-wide">Tetap</p>
+                    <p class="text-3xl font-black text-blue-700">{stats.weight_trends[weightTrendFilter]?.tetap || 0} <span class="text-sm font-bold text-blue-600/60">Anak</span></p>
+                </div>
+            </div>
+        </div>
+    </Card>
 
     <!-- Charts -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">

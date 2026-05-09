@@ -19,7 +19,8 @@ class LaporanController extends Controller
         $totalAnak = MdAnak::where('id_posyandu', $posyanduId)->count();
 
         // Get latest measurements for each child in the given month
-        $pengukurans = TrxPengukuran::whereHas('anak', function($query) use ($posyanduId) {
+        $pengukurans = TrxPengukuran::with('anak')
+            ->whereHas('anak', function($query) use ($posyanduId) {
                 $query->where('id_posyandu', $posyanduId);
             })
             ->whereMonth('tanggal_pengukuran', $month)
@@ -39,7 +40,43 @@ class LaporanController extends Controller
             'Sangat Pendek (Severely Stunted)' => 0, 'Pendek (Stunted)' => 0, 'Normal' => 0, 'Tinggi' => 0
         ];
 
-        foreach ($pengukurans as $p) {
+        $weightTrends = [
+            'all' => ['naik' => 0, 'turun' => 0, 'tetap' => 0],
+            'L' => ['naik' => 0, 'turun' => 0, 'tetap' => 0],
+            'P' => ['naik' => 0, 'turun' => 0, 'tetap' => 0],
+        ];
+
+        // Hitung tren berat badan untuk semua anak berdasarkan pengukuran paling terakhir mereka (all period)
+        $allChildrenMeasurements = TrxPengukuran::with('anak')
+            ->whereHas('anak', function($query) use ($posyanduId) {
+                $query->where('id_posyandu', $posyanduId);
+            })
+            ->orderBy('tanggal_pengukuran', 'desc')
+            ->get()
+            ->groupBy('id_anak');
+
+        foreach ($allChildrenMeasurements as $id_anak => $measurements) {
+            if ($measurements->count() >= 2) {
+                // $measurements sudah diurutkan desc, jadi first() adalah yang paling terakhir
+                $latest = $measurements->first();
+                $prev = $measurements->values()->get(1);
+
+                $trend = 'tetap';
+                if ($latest->berat_badan > $prev->berat_badan) $trend = 'naik';
+                elseif ($latest->berat_badan < $prev->berat_badan) $trend = 'turun';
+
+                $weightTrends['all'][$trend]++;
+                if ($latest->anak) {
+                    $jk = $latest->anak->jenis_kelamin;
+                    if (isset($weightTrends[$jk])) {
+                        $weightTrends[$jk][$trend]++;
+                    }
+                }
+            }
+        }
+
+        // Untuk Gizi dan Stunting tetap menggunakan filter bulan & tahun
+        foreach ($pengukurans as $id_anak => $p) {
             if (isset($giziStats[$p->status_gizi])) $giziStats[$p->status_gizi]++;
             if (isset($stuntingStats[$p->status_stunting])) $stuntingStats[$p->status_stunting]++;
         }
@@ -55,6 +92,7 @@ class LaporanController extends Controller
             'total_hadir' => $totalHadir,
             'gizi' => $giziStats,
             'stunting' => $stuntingStats,
+            'weight_trends' => $weightTrends,
             'month' => $month,
             'year' => $year
         ];

@@ -55,6 +55,11 @@ Route::middleware('auth')->group(function () {
     // Imunisasi Routes
     Route::post('/imunisasi', [\App\Http\Controllers\ImunisasiController::class, 'store'])->name('imunisasi.store');
 
+    // Import Routes
+    Route::get('/import', [\App\Http\Controllers\ImportController::class, 'index'])->name('import.index');
+    Route::post('/import', [\App\Http\Controllers\ImportController::class, 'store'])->name('import.store');
+    Route::get('/import/template', [\App\Http\Controllers\ImportController::class, 'template'])->name('import.template');
+
     // Laporan & Rekap Routes
     Route::get('/laporan', [\App\Http\Controllers\LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/export/pdf', [\App\Http\Controllers\LaporanController::class, 'exportPdf'])->name('laporan.export.pdf');

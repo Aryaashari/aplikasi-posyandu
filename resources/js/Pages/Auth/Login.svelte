@@ -28,12 +28,11 @@
     
     <!-- Logo & Header -->
     <div class="text-center mb-10">
-        <div class="inline-flex p-4 text-white rounded-3xl bg-posyandu-primary shadow-xl shadow-green-200 mb-6 scale-110">
-            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        </div>
-        <h1 class="text-4xl font-black text-posyandu-dark tracking-tight">Sistem Posyandu</h1>
+        <img 
+            src="/assets/img/mainlogo-full.png" 
+            alt="Logo Sistem Posyandu" 
+            class="h-32 w-auto mx-auto mb-6 object-contain animate-in fade-in slide-in-from-top-4 duration-700" 
+        />
         <p class="text-xl text-gray-400 mt-2 font-bold">Silakan masuk untuk akses dashboard admin</p>
     </div>
 

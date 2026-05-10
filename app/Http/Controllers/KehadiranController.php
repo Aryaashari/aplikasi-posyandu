@@ -48,9 +48,15 @@ class KehadiranController extends Controller
             ->with(['kehadiran' => function ($query) use ($today) {
                 $query->where('tanggal', $today);
             }])
-            ->get(['id', 'nama', 'nik']);
+            ->get(['id', 'nama', 'nik', 'tanggal_lahir']);
 
-        // Format to easily check status in frontend
+        // Format to easily check status in frontend and filter graduated children
+        $todayObj = Carbon::now();
+        $children = $children->filter(function ($child) use ($todayObj) {
+            $birthDate = Carbon::parse($child->tanggal_lahir);
+            return $birthDate->diffInMonths($todayObj) < 59;
+        })->values();
+
         $children->each(function ($child) {
             $child->is_present = $child->kehadiran->isNotEmpty();
             unset($child->kehadiran); // Clean up

@@ -38,6 +38,7 @@
                         <th class="px-6 py-4">Tinggi (cm)</th>
                         <th class="px-6 py-4">Status Gizi (BB/U)</th>
                         <th class="px-6 py-4">Status Tinggi (TB/U)</th>
+                        <th class="px-6 py-4 text-center">LiLA (cm)</th>
                         <th class="px-6 py-4">Aksi</th>
                     </tr>
                 </thead>
@@ -52,19 +53,24 @@
                             <td class="px-6 py-5 font-bold text-posyandu-primary">{item.berat_badan}</td>
                             <td class="px-6 py-5 text-gray-600">{item.tinggi_badan}</td>
                             <td class="px-6 py-5">
-                                <span class="px-3 py-1 rounded-full text-sm font-bold 
-                                    {item.status_gizi.includes('Buruk') ? 'bg-red-100 text-red-600' : 
+                                <span class="inline-block px-3 py-1 rounded-lg text-xs font-bold 
+                                    {item.status_gizi === 'Data Standar Tidak Ditemukan' ? 'bg-gray-100 text-gray-500' :
+                                     item.status_gizi.includes('Buruk') ? 'bg-red-100 text-red-600' : 
                                      item.status_gizi.includes('Kurang') ? 'bg-yellow-100 text-yellow-600' : 
                                      'bg-green-100 text-green-600'}">
                                     {item.status_gizi}
                                 </span>
                             </td>
                             <td class="px-6 py-5">
-                                <span class="px-3 py-1 rounded-full text-sm font-bold 
-                                    {item.status_stunting.includes('Stunted') ? 'bg-red-100 text-red-600' : 
+                                <span class="inline-block px-3 py-1 rounded-lg text-xs font-bold 
+                                    {item.status_stunting === 'Data Standar Tidak Ditemukan' ? 'bg-gray-100 text-gray-500' :
+                                     item.status_stunting.includes('Stunted') ? 'bg-red-100 text-red-600' : 
                                      'bg-blue-100 text-blue-600'}">
                                     {item.status_stunting}
                                 </span>
+                            </td>
+                            <td class="px-6 py-5 text-center font-bold text-gray-700">
+                                {item.lingkar_lengan || '-'}
                             </td>
                             <td class="px-6 py-5">
                                 <div class="flex items-center gap-2 transition-opacity">

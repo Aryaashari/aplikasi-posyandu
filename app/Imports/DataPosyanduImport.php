@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\MdAnak;
 use App\Models\TrxPengukuran;
+use App\Models\TrxKehadiran;
 use App\Services\ZScoreService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -110,6 +111,7 @@ class DataPosyanduImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
             $tinggi = $this->parseNumeric($row['tinggi'] ?? null);
             $tanggalUkur = $this->parseDate($row['tanggalukur'] ?? null);
             $lingkarKepala = $this->parseNumeric($row['lingkar_kepala'] ?? null);
+            $lingkarLengan = $this->parseNumeric($row['lila'] ?? null);
 
             $hasMeasurementData = !empty($row['berat']) || !empty($row['tinggi']) || !empty($row['tanggalukur']);
 
@@ -140,6 +142,10 @@ class DataPosyanduImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                 }
                 if (!empty($row['lingkar_kepala']) && $lingkarKepala === null) {
                     $this->addIssue($rowNumber, $nik, $namaAnak, 'lingkar_kepala', "Lingkar kepala bukan angka valid: \"{$row['lingkar_kepala']}\"", 'error');
+                    $hasError = true;
+                }
+                if (!empty($row['lila']) && $lingkarLengan === null) {
+                    $this->addIssue($rowNumber, $nik, $namaAnak, 'LILA', "Lingkar lengan bukan angka valid: \"{$row['lila']}\"", 'error');
                     $hasError = true;
                 }
 
@@ -182,6 +188,7 @@ class DataPosyanduImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                     'tinggi' => $tinggi,
                     'tanggal_ukur' => $tanggalUkur,
                     'lingkar_kepala' => $lingkarKepala,
+                    'lingkar_lengan' => $lingkarLengan,
                     'cara_ukur' => $this->parseCaraUkur($row['caraukur'] ?? null),
                     'has_measurement' => $hasMeasurementData,
                 ];
@@ -254,6 +261,28 @@ class DataPosyanduImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                     $this->importedCount++;
                 }
 
+                // Auto sync attendance if measurement date is present
+                if ($vr['tanggal_ukur']) {
+                    $birthDate = \Carbon\Carbon::parse($anak->tanggal_lahir);
+                    $measureDate = \Carbon\Carbon::parse($vr['tanggal_ukur']);
+                    $ageInMonths = (int)$birthDate->diffInMonths($measureDate);
+
+                    if ($ageInMonths < 59) {
+                        TrxKehadiran::updateOrCreate(
+                            [
+                                'id_anak' => $anak->id,
+                                'id_posyandu' => $this->posyanduId,
+                                'tanggal' => $vr['tanggal_ukur'],
+                            ],
+                            [
+                                'status_hadir' => true,
+                                'status' => 'Hadir',
+                                'keterangan' => 'Hadir otomatis dari import data.',
+                            ]
+                        );
+                    }
+                }
+
                 // Insert pengukuran if measurement data exists and is complete
                 if ($vr['has_measurement'] && $vr['berat'] && $vr['tinggi'] && $vr['tanggal_ukur']) {
                     $zScoreResults = $this->zScoreService->calculate(
@@ -273,6 +302,7 @@ class DataPosyanduImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                         'berat_badan' => $vr['berat'],
                         'tinggi_badan' => $vr['tinggi'],
                         'lingkar_kepala' => $vr['lingkar_kepala'] ?: 0,
+                        'lingkar_lengan' => $vr['lingkar_lengan'] ?: 0,
                         'cara_ukur' => $vr['cara_ukur'],
                     ], $zScoreResults);
 

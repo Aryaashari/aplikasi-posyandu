@@ -2,39 +2,128 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\RefGrowthStandard;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class GrowthStandardSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Sample data for Boys (0-1 month)
-        \App\Models\RefGrowthStandard::create([
-            'umur_bulan' => 0,
-            'jenis_kelamin' => 'L',
-            'median_bb' => 3.3,
-            'sd_minus_2_bb' => 2.5,
-            'sd_minus_3_bb' => 2.1,
-            'median_tb' => 49.9,
-            'sd_minus_2_tb' => 46.1,
-            'sd_minus_3_tb' => 44.2,
-        ]);
+        DB::table('ref_growth_standard')->truncate();
 
-        \App\Models\RefGrowthStandard::create([
-            'umur_bulan' => 1,
-            'jenis_kelamin' => 'L',
-            'median_bb' => 4.5,
-            'sd_minus_2_bb' => 3.4,
-            'sd_minus_3_bb' => 2.9,
-            'median_tb' => 54.7,
-            'sd_minus_2_tb' => 50.8,
-            'sd_minus_3_tb' => 48.9,
-        ]);
-        
-        // Add more months as needed, or just these for test
+        // Data Standar WHO 2006 (0-60 Bulan)
+        // Format: [umur, jk, median_bb, sd-2_bb, sd-3_bb, median_tb, sd-2_tb, sd-3_tb]
+        $data = [
+            // Laki-laki (L)
+            [0, 'L', 3.3, 2.5, 2.1, 49.9, 46.1, 44.2],
+            [1, 'L', 4.5, 3.4, 2.9, 54.7, 50.8, 48.9],
+            [2, 'L', 5.6, 4.3, 3.8, 58.4, 54.4, 52.4],
+            [3, 'L', 6.4, 5.0, 4.4, 61.4, 57.3, 55.3],
+            [4, 'L', 7.0, 5.6, 4.9, 63.9, 59.7, 57.6],
+            [5, 'L', 7.5, 6.0, 5.3, 65.9, 61.7, 59.5],
+            [6, 'L', 7.9, 6.4, 5.7, 67.6, 63.3, 61.2],
+            [7, 'L', 8.3, 6.7, 5.9, 69.2, 64.8, 62.7],
+            [8, 'L', 8.6, 6.9, 6.2, 70.6, 66.2, 64.0],
+            [9, 'L', 8.9, 7.1, 6.4, 72.0, 67.5, 65.2],
+            [10, 'L', 9.2, 7.4, 6.6, 73.3, 68.7, 66.4],
+            [11, 'L', 9.4, 7.6, 6.8, 74.5, 69.9, 67.6],
+            [12, 'L', 9.6, 7.8, 6.9, 75.7, 71.0, 68.6],
+            [13, 'L', 9.9, 7.9, 7.1, 76.9, 72.1, 69.7],
+            [14, 'L', 10.1, 8.1, 7.2, 78.0, 73.1, 70.6],
+            [15, 'L', 10.3, 8.3, 7.4, 79.1, 74.1, 71.6],
+            [16, 'L', 10.5, 8.4, 7.5, 80.2, 75.0, 72.5],
+            [17, 'L', 10.7, 8.6, 7.7, 81.2, 76.0, 73.5],
+            [18, 'L', 10.9, 8.8, 7.8, 82.3, 76.9, 74.4],
+            [19, 'L', 11.1, 8.9, 8.0, 83.2, 77.9, 75.2],
+            [20, 'L', 11.3, 9.1, 8.1, 84.2, 78.8, 76.1],
+            [21, 'L', 11.5, 9.2, 8.2, 85.1, 79.7, 77.0],
+            [22, 'L', 11.8, 9.4, 8.4, 86.0, 80.5, 77.8],
+            [23, 'L', 12.0, 9.5, 8.5, 86.9, 81.3, 78.6],
+            [24, 'L', 12.2, 9.7, 8.6, 87.1, 81.0, 78.0], // Transition to standing
+            [25, 'L', 12.4, 9.8, 8.8, 88.0, 81.7, 78.6],
+            [30, 'L', 13.3, 10.5, 9.4, 91.9, 85.1, 81.7],
+            [36, 'L', 14.3, 11.3, 10.1, 96.1, 88.7, 85.0],
+            [42, 'L', 15.3, 12.0, 10.7, 99.9, 92.1, 88.2],
+            [48, 'L', 16.3, 12.7, 11.3, 103.3, 94.9, 90.8],
+            [54, 'L', 17.3, 13.4, 11.9, 106.7, 97.8, 93.6],
+            [60, 'L', 18.3, 14.1, 12.4, 110.0, 100.7, 96.0],
+
+            // Perempuan (P)
+            [0, 'P', 3.2, 2.4, 2.0, 49.1, 45.4, 43.6],
+            [1, 'P', 4.2, 3.2, 2.7, 53.7, 49.8, 47.8],
+            [2, 'P', 5.1, 3.9, 3.4, 57.1, 53.0, 51.0],
+            [3, 'P', 5.8, 4.5, 4.0, 59.8, 55.6, 53.5],
+            [4, 'P', 6.4, 5.0, 4.4, 62.1, 57.8, 55.6],
+            [5, 'P', 6.9, 5.4, 4.8, 64.0, 59.6, 57.4],
+            [6, 'P', 7.3, 5.7, 5.1, 65.7, 61.2, 58.9],
+            [7, 'P', 7.6, 6.0, 5.3, 67.3, 62.7, 60.3],
+            [8, 'P', 7.9, 6.3, 5.6, 68.7, 64.0, 61.7],
+            [9, 'P', 8.2, 6.5, 5.8, 70.1, 65.3, 62.9],
+            [10, 'P', 8.5, 6.7, 5.9, 71.5, 66.5, 64.1],
+            [11, 'P', 8.7, 6.9, 6.1, 72.8, 67.7, 65.2],
+            [12, 'P', 8.9, 7.0, 6.3, 74.0, 68.9, 66.3],
+            [13, 'P', 9.2, 7.2, 6.4, 75.2, 70.0, 67.3],
+            [14, 'P', 9.4, 7.4, 6.6, 76.4, 71.0, 68.3],
+            [15, 'P', 9.6, 7.6, 6.7, 77.5, 72.0, 69.3],
+            [16, 'P', 9.8, 7.7, 6.9, 78.6, 73.0, 70.2],
+            [17, 'P', 10.0, 7.9, 7.0, 79.7, 74.0, 71.1],
+            [18, 'P', 10.2, 8.1, 7.2, 80.7, 74.9, 72.0],
+            [19, 'P', 10.4, 8.2, 7.3, 81.7, 75.8, 72.8],
+            [20, 'P', 10.6, 8.4, 7.5, 82.7, 76.7, 73.7],
+            [21, 'P', 10.9, 8.6, 7.6, 83.7, 77.5, 74.5],
+            [22, 'P', 11.1, 8.7, 7.8, 84.6, 78.4, 75.2],
+            [23, 'P', 11.3, 8.9, 7.9, 85.5, 79.2, 76.0],
+            [24, 'P', 11.5, 9.0, 8.1, 85.7, 79.3, 75.8], // Transition
+            [25, 'P', 11.7, 9.2, 8.2, 86.6, 80.0, 76.6],
+            [30, 'P', 12.7, 10.0, 8.9, 90.7, 83.6, 80.0],
+            [36, 'P', 13.9, 10.8, 9.6, 95.1, 87.4, 83.6],
+            [42, 'P', 15.0, 11.6, 10.2, 99.0, 90.9, 86.9],
+            [48, 'P', 16.1, 12.3, 10.9, 102.7, 94.1, 89.8],
+            [54, 'P', 17.2, 13.0, 11.5, 106.2, 97.2, 92.7],
+            [60, 'P', 18.2, 13.7, 12.1, 109.4, 100.2, 95.2],
+        ];
+
+        // Interpolation for missing months to provide full 0-60 coverage
+        for ($jk = 0; $jk < 2; $jk++) {
+            $gender = ($jk == 0) ? 'L' : 'P';
+            $genderData = array_filter($data, fn($d) => $d[1] == $gender);
+            $genderData = array_values($genderData);
+
+            for ($i = 0; $i < count($genderData) - 1; $i++) {
+                $start = $genderData[$i];
+                $end = $genderData[$i+1];
+                $stepCount = $end[0] - $start[0];
+
+                for ($step = 0; $step < $stepCount; $step++) {
+                    $currentMonth = $start[0] + $step;
+                    $ratio = $step / $stepCount;
+
+                    RefGrowthStandard::create([
+                        'umur_bulan' => $currentMonth,
+                        'jenis_kelamin' => $gender,
+                        'median_bb' => round($start[2] + ($end[2] - $start[2]) * $ratio, 2),
+                        'sd_minus_2_bb' => round($start[3] + ($end[3] - $start[3]) * $ratio, 2),
+                        'sd_minus_3_bb' => round($start[4] + ($end[4] - $start[4]) * $ratio, 2),
+                        'median_tb' => round($start[5] + ($end[5] - $start[5]) * $ratio, 2),
+                        'sd_minus_2_tb' => round($start[6] + ($end[6] - $start[6]) * $ratio, 2),
+                        'sd_minus_3_tb' => round($start[7] + ($end[7] - $start[7]) * $ratio, 2),
+                    ]);
+                }
+            }
+            
+            // Add the last month (60)
+            $last = end($genderData);
+            RefGrowthStandard::create([
+                'umur_bulan' => $last[0],
+                'jenis_kelamin' => $last[1],
+                'median_bb' => $last[2],
+                'sd_minus_2_bb' => $last[3],
+                'sd_minus_3_bb' => $last[4],
+                'median_tb' => $last[5],
+                'sd_minus_2_tb' => $last[6],
+                'sd_minus_3_tb' => $last[7],
+            ]);
+        }
     }
 }

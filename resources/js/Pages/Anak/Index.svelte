@@ -26,6 +26,34 @@
             router.delete(`/anak/${id}`);
         }
     }
+
+    function getAgeInfo(birthDate) {
+        const birth = new Date(birthDate);
+        const now = new Date();
+        let months = (now.getFullYear() - birth.getFullYear()) * 12;
+        months += now.getMonth() - birth.getMonth();
+        if (now.getDate() < birth.getDate()) months--;
+        months = Math.max(0, months);
+        
+        let category = '';
+        let colorClass = '';
+        
+        if (months <= 5) {
+            category = '0-5';
+            colorClass = 'bg-blue-50 text-blue-700 border-blue-100';
+        } else if (months <= 11) {
+            category = '6-11';
+            colorClass = 'bg-teal-50 text-teal-700 border-teal-100';
+        } else if (months < 59) {
+            category = '12-59';
+            colorClass = 'bg-amber-50 text-amber-700 border-amber-100';
+        } else {
+            category = 'Lulus';
+            colorClass = 'bg-gray-100 text-gray-500 border-gray-200';
+        }
+        
+        return { months, category, colorClass };
+    }
 </script>
 
 <div class="space-y-6 sm:space-y-8">
@@ -69,6 +97,8 @@
                     <tr class="bg-gray-50 border-b border-gray-100">
                         <th class="px-5 sm:px-8 py-4 sm:py-5 text-xs sm:text-sm font-bold text-gray-400 uppercase tracking-wider">Anak / Balita</th>
                         <th class="hidden md:table-cell px-8 py-5 text-sm font-bold text-gray-400 uppercase tracking-wider">NIK & KK</th>
+                        <th class="hidden sm:table-cell px-5 sm:px-8 py-5 text-sm font-bold text-gray-400 uppercase tracking-wider">Umur</th>
+                        <th class="hidden sm:table-cell px-5 sm:px-8 py-5 text-sm font-bold text-gray-400 uppercase tracking-wider">Kategori</th>
                         <th class="hidden sm:table-cell px-5 sm:px-8 py-5 text-sm font-bold text-gray-400 uppercase tracking-wider">Jenis Kelamin</th>
                         <th class="hidden lg:table-cell px-8 py-5 text-sm font-bold text-gray-400 uppercase tracking-wider">Orang Tua</th>
                         <th class="px-5 sm:px-8 py-5 text-sm font-bold text-gray-400 uppercase tracking-wider text-right">Aksi</th>
@@ -77,7 +107,7 @@
                 <tbody class="divide-y divide-gray-50">
                     {#if anak.data.length === 0}
                         <tr>
-                            <td colspan="5" class="px-5 sm:px-8 py-10 sm:py-20 text-center">
+                            <td colspan="7" class="px-5 sm:px-8 py-10 sm:py-20 text-center">
                                 <div class="flex flex-col items-center">
                                     <div class="p-4 sm:p-6 bg-gray-100 rounded-full mb-4 text-gray-300">
                                         <svg class="w-12 h-12 sm:w-16 sm:h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,6 +120,7 @@
                         </tr>
                     {:else}
                         {#each anak.data as item}
+                            {@const ageInfo = getAgeInfo(item.tanggal_lahir)}
                             <tr class="hover:bg-gray-50/50 transition-colors group">
                                 <td class="px-5 sm:px-8 py-4 sm:py-6">
                                     <div class="flex items-center gap-3 sm:gap-4">
@@ -109,6 +140,15 @@
                                 <td class="hidden md:table-cell px-8 py-6 font-mono text-lg text-gray-500">
                                     <div>NIK: {item.nik}</div>
                                     <div class="text-sm opacity-60">KK: {item.no_kk}</div>
+                                </td>
+                                <td class="hidden sm:table-cell px-8 py-6 text-center">
+                                    <div class="text-xl font-black text-posyandu-dark">{ageInfo.months}</div>
+                                    <div class="text-xs font-bold text-gray-400 uppercase">Bulan</div>
+                                </td>
+                                <td class="hidden sm:table-cell px-8 py-6">
+                                    <span class="px-4 py-2 rounded-xl text-sm font-black border {ageInfo.colorClass}">
+                                        {ageInfo.category}
+                                    </span>
                                 </td>
                                 <td class="hidden sm:table-cell px-8 py-6">
                                     <span class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-black {item.jenis_kelamin === 'L' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-pink-50 text-pink-600 border border-pink-100'}">

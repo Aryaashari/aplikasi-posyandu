@@ -75,23 +75,78 @@ class LaporanController extends Controller
             }
         }
 
-        // Untuk Gizi dan Stunting tetap menggunakan filter bulan & tahun
+        $giziDetail = [
+            'Gizi Buruk' => [], 'Gizi Kurang' => [], 'Gizi Baik' => [], 'Gizi Lebih' => []
+        ];
+        
+        $stuntingDetail = [
+            'Sangat Pendek (Severely Stunted)' => [], 'Pendek (Stunted)' => [], 'Normal' => [], 'Tinggi' => []
+        ];
+
         foreach ($pengukurans as $id_anak => $p) {
-            if (isset($giziStats[$p->status_gizi])) $giziStats[$p->status_gizi]++;
-            if (isset($stuntingStats[$p->status_stunting])) $stuntingStats[$p->status_stunting]++;
+            $anakData = [
+                'id' => $p->id_anak,
+                'nama' => $p->anak->nama,
+                'jk' => $p->anak->jenis_kelamin,
+                'bb' => $p->berat_badan,
+                'tb' => $p->tinggi_badan,
+                'tanggal' => $p->tanggal_pengukuran
+            ];
+
+            if (isset($giziStats[$p->status_gizi])) {
+                $giziStats[$p->status_gizi]++;
+                $giziDetail[$p->status_gizi][] = $anakData;
+            }
+            if (isset($stuntingStats[$p->status_stunting])) {
+                $stuntingStats[$p->status_stunting]++;
+                $stuntingDetail[$p->status_stunting][] = $anakData;
+            }
         }
 
-        $totalHadir = TrxKehadiran::where('id_posyandu', $posyanduId)
+        $kehadiranQuery = TrxKehadiran::with('anak')
+            ->where('id_posyandu', $posyanduId)
             ->whereMonth('tanggal', $month)
             ->whereYear('tanggal', $year)
-            ->distinct('id_anak')
-            ->count('id_anak');
+            ->get()
+            ->unique('id_anak');
+
+        $totalHadir = $kehadiranQuery->count();
+        $kehadiranDetail = [
+            'gender' => ['L' => 0, 'P' => 0],
+            'category' => [
+                '0-5' => 0,
+                '6-11' => 0,
+                '12-59' => 0,
+                'Lulus' => 0
+            ]
+        ];
+
+        foreach ($kehadiranQuery as $k) {
+            $anak = $k->anak;
+            if ($anak) {
+                // Gender
+                $kehadiranDetail['gender'][$anak->jenis_kelamin]++;
+
+                // Category (consistent with Svelte frontend logic)
+                $birthDate = \Carbon\Carbon::parse($anak->tanggal_lahir);
+                $measureDate = \Carbon\Carbon::parse($k->tanggal);
+                $months = (int)$birthDate->diffInMonths($measureDate);
+
+                if ($months <= 5) $kehadiranDetail['category']['0-5']++;
+                elseif ($months <= 11) $kehadiranDetail['category']['6-11']++;
+                elseif ($months < 59) $kehadiranDetail['category']['12-59']++;
+                else $kehadiranDetail['category']['Lulus']++;
+            }
+        }
 
         return [
             'total_anak' => $totalAnak,
             'total_hadir' => $totalHadir,
+            'hadir_detail' => $kehadiranDetail,
             'gizi' => $giziStats,
+            'gizi_detail' => $giziDetail,
             'stunting' => $stuntingStats,
+            'stunting_detail' => $stuntingDetail,
             'weight_trends' => $weightTrends,
             'month' => $month,
             'year' => $year

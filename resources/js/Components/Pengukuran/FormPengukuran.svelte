@@ -16,6 +16,7 @@
         berat_badan: (() => pengukuran?.berat_badan || '')(),
         tinggi_badan: (() => pengukuran?.tinggi_badan || '')(),
         lingkar_kepala: (() => pengukuran?.lingkar_kepala || '')(),
+        lingkar_lengan: (() => pengukuran?.lingkar_lengan || '')(),
         cara_ukur: (() => pengukuran?.cara_ukur || '')(),
         catatan: (() => pengukuran?.catatan || '')()
     });
@@ -121,6 +122,19 @@
                         bind:value={form.lingkar_kepala} 
                         placeholder="Contoh: 42.0"
                         required 
+                    />
+                </FormFieldGroup>
+            </div>
+
+            <!-- Arm Circumference -->
+            <div>
+                <FormFieldGroup label="Lingkar Lengan (cm)" forId="lingkar_lengan" error={form.errors.lingkar_lengan}>
+                    <Input 
+                        type="number" 
+                        step="0.1" 
+                        id="lingkar_lengan" 
+                        bind:value={form.lingkar_lengan} 
+                        placeholder="Contoh: 12.5"
                     />
                 </FormFieldGroup>
             </div>

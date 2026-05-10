@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MdAnak;
 use App\Models\TrxPengukuran;
+use App\Models\TrxKehadiran;
 use App\Services\ZScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,7 @@ class PengukuranController extends Controller
             'berat_badan' => ['required', 'numeric', 'min:0'],
             'tinggi_badan' => ['required', 'numeric', 'min:0'],
             'lingkar_kepala' => ['required', 'numeric', 'min:0'],
+            'lingkar_lengan' => ['nullable', 'numeric', 'min:0'],
             'cara_ukur' => ['required', 'in:Berdiri,Telentang'],
             'catatan' => ['nullable', 'string'],
         ]);
@@ -68,6 +70,9 @@ class PengukuranController extends Controller
         $data = array_merge($validated, $results);
 
         TrxPengukuran::create($data);
+
+        // Auto sync attendance
+        $this->syncKehadiran($anak, $validated['tanggal_pengukuran']);
 
         return redirect()->route('pengukuran.index')->with('success', 'Data pengukuran berhasil disimpan.');
     }
@@ -91,6 +96,7 @@ class PengukuranController extends Controller
             'berat_badan' => ['required', 'numeric', 'min:0'],
             'tinggi_badan' => ['required', 'numeric', 'min:0'],
             'lingkar_kepala' => ['required', 'numeric', 'min:0'],
+            'lingkar_lengan' => ['nullable', 'numeric', 'min:0'],
             'cara_ukur' => ['required', 'in:Berdiri,Telentang'],
             'catatan' => ['nullable', 'string'],
         ]);
@@ -109,6 +115,9 @@ class PengukuranController extends Controller
 
         $pengukuran->update($data);
 
+        // Auto sync attendance
+        $this->syncKehadiran($anak, $validated['tanggal_pengukuran']);
+
         return redirect()->route('pengukuran.index')->with('success', 'Data pengukuran berhasil diperbarui.');
     }
 
@@ -117,5 +126,30 @@ class PengukuranController extends Controller
         $pengukuran->delete();
 
         return redirect()->route('pengukuran.index')->with('success', 'Data pengukuran berhasil dihapus.');
+    }
+
+    private function syncKehadiran($anak, $tanggal)
+    {
+        $birthDate = \Carbon\Carbon::parse($anak->tanggal_lahir);
+        $measureDate = \Carbon\Carbon::parse($tanggal);
+        $ageInMonths = (int)$birthDate->diffInMonths($measureDate);
+
+        // Don't sync attendance if child is 59 months or older (Graduated)
+        if ($ageInMonths >= 59) {
+            return;
+        }
+
+        TrxKehadiran::updateOrCreate(
+            [
+                'id_anak' => $anak->id,
+                'id_posyandu' => $anak->id_posyandu,
+                'tanggal' => $tanggal,
+            ],
+            [
+                'status_hadir' => true,
+                'status' => 'Hadir',
+                'keterangan' => 'Hadir otomatis dari pengisian data pengukuran.',
+            ]
+        );
     }
 }

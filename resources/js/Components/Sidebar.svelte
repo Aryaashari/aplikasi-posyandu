@@ -45,36 +45,23 @@
 >
     <!-- Logo area -->
     <div
-        class="flex items-center justify-center h-20 {isOpen
-            ? 'px-6'
-            : 'px-0'} border-b border-gray-100 bg-posyandu-primary/5 transition-all duration-300"
+        class="flex items-center justify-center h-20 border-b border-gray-100 bg-white transition-all duration-300"
     >
-        <div class="flex items-center gap-3">
-            <div
-                class="flex-shrink-0 p-2 text-white rounded-xl bg-posyandu-primary shadow-sm"
-            >
-                <svg
-                    class="w-7 h-7"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                </svg>
-            </div>
+        <a href="/dashboard" class="flex items-center justify-center transition-all duration-300">
             {#if isOpen}
-                <span
-                    class="text-xl font-bold tracking-tight text-posyandu-dark whitespace-nowrap"
-                >
-                    Sistem Posyandu
-                </span>
+                <img 
+                    src="/assets/img/mainlogo-full.png" 
+                    alt="Logo Posyandu" 
+                    class="h-14 w-auto object-contain animate-in fade-in slide-in-from-left-2 duration-500" 
+                />
+            {:else}
+                <img 
+                    src="/assets/img/mainlogo.png" 
+                    alt="Logo" 
+                    class="h-10 w-auto object-contain animate-in fade-in duration-500" 
+                />
             {/if}
-        </div>
+        </a>
     </div>
 
     <!-- Navigation -->

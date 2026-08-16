@@ -148,7 +148,13 @@ class AnakController extends Controller
     {
         $this->authorizeAccess($anak);
 
-        $anak->delete();
+        \Illuminate\Support\Facades\DB::transaction(function () use ($anak) {
+            $anak->imunisasi()->delete();
+            $anak->pengukuran()->delete();
+            $anak->kehadiran()->delete();
+            $anak->pmt()->delete();
+            $anak->delete();
+        });
 
         return redirect()->route('anak.index')->with('success', 'Data anak berhasil dihapus.');
     }
